@@ -20,9 +20,10 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Decode service account json
+      - name: Debug check service account file
         run: |
-          cat ${GITHUB_WORKSPACE}/service-account.json
+          ls -la $GITHUB_WORKSPACE
+          cat $GITHUB_WORKSPACE/service-account.json
           echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > ${GITHUB_WORKSPACE}/service-account.json
 
       - name: Set up Gradle
