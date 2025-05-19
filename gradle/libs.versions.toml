@@ -38,6 +38,7 @@ datastore = "1.1.6"
 firebase-bom = "32.7.3"
 crashlytics-gradle = "2.9.9"
 google-services = "4.4.1"
+app-distribution-gradle = "4.0.0"
 
 
 [libraries]
@@ -98,3 +99,4 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 android-library = { id = "com.android.library", version.ref = "agp" }
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics-gradle" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
+app-distribution = { id = "com.google.firebase.appdistribution", version.ref = "app-distribution-gradle" }

@@ -8,6 +8,8 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.google.services)
     alias(libs.plugins.crashlytics)
+    alias(libs.plugins.app.distribution)
+
 }
 
 android {
@@ -111,4 +113,11 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
+
+}
+
+firebaseAppDistribution {
+    serviceCredentialsFile = project.findProperty("firebaseServiceAccountFile") as String?
+    releaseNotes = project.findProperty("appDistributionReleaseNotes") as String?
+    groups = project.findProperty("appDistributionGroups") as String?
 }

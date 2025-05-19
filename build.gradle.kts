@@ -10,4 +10,6 @@ plugins {
     //Firebase
     alias(libs.plugins.google.services) apply false
     alias(libs.plugins.crashlytics) apply false
+    alias(libs.plugins.app.distribution) apply false
+
 }
