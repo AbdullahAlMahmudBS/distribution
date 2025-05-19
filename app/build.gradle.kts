@@ -117,6 +117,7 @@ dependencies {
 }
 
 firebaseAppDistribution {
+    appId = project.findProperty("firebaseAppId") as String?
     serviceCredentialsFile = project.findProperty("firebaseServiceAccountFile") as String?
     releaseNotes = project.findProperty("appDistributionReleaseNotes") as String?
     groups = project.findProperty("appDistributionGroups") as String?

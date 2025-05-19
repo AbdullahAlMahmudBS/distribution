@@ -38,4 +38,5 @@ jobs:
           ./gradlew appDistributionUploadRelease \
             -PfirebaseServiceAccountFile=${GITHUB_WORKSPACE}/service-account.json \
             -PappDistributionReleaseNotes="Dev branch build: ${{ github.sha }}" \
-            -PappDistributionGroups="testers"
+            -PappDistributionGroups="testers" \
+            -PappDistributionAppId="1:239854791261:android:a42e33b8c72236339afbb4" \
