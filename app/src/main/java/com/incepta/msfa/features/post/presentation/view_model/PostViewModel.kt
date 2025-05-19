@@ -32,7 +32,6 @@ class PostViewModel @Inject constructor(
         fetchSliders()
     }
 
-
     fun onEvent(event: PostEvent) {
         when (event) {
             is PostEvent.OnRefresh -> {
