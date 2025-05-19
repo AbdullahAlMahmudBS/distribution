@@ -1,5 +1,6 @@
 package com.incepta.msfa.features.location
 
+import android.Manifest
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,7 +18,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.incepta.core.components.PermissionRequestDialog
+import com.incepta.core.presentation.components.PermissionRequestDialog
 import com.incepta.msfa.navigation.Route
 
 
@@ -32,7 +33,7 @@ fun LocationScreen (){
     // Use the PermissionRequestDialog composable
     if (showPermissionDialog && !hasPermission) {
         PermissionRequestDialog(
-            permission = android.Manifest.permission.ACCESS_FINE_LOCATION,
+            permission = Manifest.permission.ACCESS_FINE_LOCATION,
             rationaleText = "Location access is needed to show nearby theaters.",
             onPermissionGranted = {
                 hasPermission = true

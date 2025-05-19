@@ -54,16 +54,6 @@ object NetworkExceptionMapper {
             400 -> NetworkErrorException("Bad request")
             502 -> NetworkErrorException("Bad gateway")
             504 -> NetworkErrorException("Gateway timeout")
-            408 -> NetworkTimeoutException("Request timeout")
-            408 -> NetworkTimeoutException("Request timeout")
-            503 -> NetworkErrorException("Service unavailable")
-            504 -> GatewayException("Gateway timeout")
-            429 -> NetworkErrorException("Too many requests")
-            403 -> NetworkErrorException("Forbidden")
-            404 -> NetworkErrorException("Not found")
-            400 -> NetworkErrorException("Bad request")
-            500 -> NetworkErrorException("Internal server error")
-            502 -> NetworkErrorException("Bad gateway")
             else -> UnknownException("Unknown error")
         }
     }

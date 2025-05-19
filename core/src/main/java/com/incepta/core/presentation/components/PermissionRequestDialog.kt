@@ -1,4 +1,4 @@
-package com.incepta.core.components
+package com.incepta.core.presentation.components
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts

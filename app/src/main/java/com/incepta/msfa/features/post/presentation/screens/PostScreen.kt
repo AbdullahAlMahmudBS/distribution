@@ -42,14 +42,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.incepta.core.base.BaseResponse
-import com.incepta.core.base.UiState
+import com.incepta.core.base.UiEventHandler
 import com.incepta.msfa.features.post.data.model.PostDto
 import com.incepta.msfa.features.post.data.model.PostEntity
+import com.incepta.msfa.features.post.data.model.SliderDto
 import com.incepta.msfa.features.post.data.repository.PostRepositoryImpl
 import com.incepta.msfa.shared.data.local.PostDao
 import com.incepta.msfa.features.post.domain.usecase.GetAllPostUseCase
+import com.incepta.msfa.features.post.domain.usecase.GetAllSlidersUseCase
 import com.incepta.msfa.features.post.presentation.components.PostList
 import com.incepta.msfa.features.post.presentation.components.ShimmerLoadingEffect
+import com.incepta.msfa.features.post.presentation.components.ShowcaseSliders
+import com.incepta.msfa.features.post.presentation.model.PostEvent
 import com.incepta.msfa.shared.data.remote.AppApiService
 import com.inceptaiddi.core.presentation.post.PostViewModel
 import retrofit2.Response
@@ -58,33 +62,19 @@ import retrofit2.Response
 @Composable
 fun PostScreen(viewModel: PostViewModel = hiltViewModel()) {
     val state by viewModel.postsState.collectAsState()
-    val coroutineScope = rememberCoroutineScope()
-    var errorMessage by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
+    val uiEvent by viewModel.uiEvent.collectAsState()
 
-    // Show snackbar for retry failure or cached data
-    LaunchedEffect(state) {
-        when (state) {
-            is UiState.Error -> {
-                val errorState = state as UiState.Error
-                if (errorState.canRetry) {
-                    snackbarHostState.showSnackbar(
-                        "Failed. ${errorState.errorMessage}. Tap to retry.",
-                    )
-                } else if (state.data?.isNotEmpty() == true) {
-                    snackbarHostState.showSnackbar("Showing cached posts due to network error.")
-                }
-            }
-            else -> {}
+    LaunchedEffect(state.error) {
+        state.error?.let { error ->
+            snackbarHostState.showSnackbar(
+                message = if (error.canRetry) "Failed. ${error.message}. Tap to retry." else error.message
+            )
         }
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Posts") },
-            )
-        },
+        topBar = { TopAppBar(title = { Text("Posts") }) },
         content = { paddingValues ->
             Box(
                 modifier = Modifier
@@ -92,40 +82,31 @@ fun PostScreen(viewModel: PostViewModel = hiltViewModel()) {
                     .padding(paddingValues)
                     .background(MaterialTheme.colorScheme.background)
             ) {
-
-                Column (
-                    modifier  = Modifier.fillMaxSize()
-                ){
+                Column(modifier = Modifier.fillMaxSize()) {
                     Button(
                         onClick = { viewModel.insertSamplePosts() },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
+                        modifier = Modifier.fillMaxWidth().padding(16.dp)
                     ) {
                         Text("Insert Sample Posts", fontSize = 16.sp)
                     }
-                    when (state) {
-                        UiState.Idle -> TODO()
 
-                        is UiState.Loading -> {
-                            if ((state as UiState.Loading).isInitialLoad) {
-                                ShimmerLoadingEffect()
-                            }
+                    if (state.isLoading) {
+                        ShimmerLoadingEffect()
+                    } else {
+                        ShowcaseSliders(
+                            sliders = state.sliders,
+                            onSliderClick = { viewModel.onEvent(PostEvent.OnSliderClick(it)) }
+                        )
+
+                        PostList(
+                            posts = state.posts,
+                            onPostClick = { viewModel.onEvent(PostEvent.OnPostClick(it)) }
+                        )
+
+                        if (state.posts.isEmpty() && state.sliders.isEmpty() && state.error == null) {
+                            EmptyState("No content available")
                         }
-
-                        is UiState.Success, is UiState.Empty -> {
-                            PostList(posts = state.data.orEmpty())
-                            if (state is UiState.Empty) {
-                                EmptyState(message = state.errorMessage ?: "No posts available")
-                            }
-                        }
-
-                        is UiState.Error -> {
-                            PostList(posts = state.data.orEmpty()) // Show cached posts
-                        }
-
                     }
-
                 }
 
                 SnackbarHost(
@@ -136,15 +117,20 @@ fun PostScreen(viewModel: PostViewModel = hiltViewModel()) {
                             shape = RoundedCornerShape(8.dp),
                             modifier = Modifier.padding(16.dp),
                             action = {
-                                TextButton(onClick = { viewModel.refreshPosts() }) {
-                                    Text("Retry")
+                                if (state.error?.canRetry == true) {
+                                    TextButton(onClick = { viewModel.refreshPosts() }) {
+                                        Text("Retry")
+                                    }
                                 }
                             },
-                            content = {
-                                Text(it.visuals.message)
-                            }
+                            content = { Text(it.visuals.message) }
                         )
                     }
+                )
+                UiEventHandler(
+                    uiEvent = uiEvent,
+                    onEventConsumed = { viewModel.clearUiEvent() },
+                    modifier = Modifier.align(Alignment.BottomCenter)
                 )
             }
         }
@@ -224,31 +210,44 @@ fun PostScreenPreview() {
                 GetAllPostUseCase(
                     PostRepositoryImpl(
                         object : AppApiService {
-                            override suspend fun getPosts(): Response<BaseResponse<List<PostDto>>> {
+                            override suspend fun getPosts(): Response<List<PostDto>> {
                                 return Response.success(
-                                    BaseResponse(
-                                        data = listOf(
-                                            PostDto(
-                                                id = 1,
-                                                title = "Sample Post",
-                                                description = "This is a sample post description."
-                                            ),
-                                            PostDto(
-                                                id = 2,
-                                                title = "Sample Post 2",
-                                                description = "This is a sample post description."
-                                            ),
-                                            PostDto(
-                                                id = 3,
-                                                title = "Sample Post 3",
-                                                description = "This is a sample post description."
-                                            )
+                                    listOf(
+                                        PostDto(
+                                            id = 1,
+                                            title = "Sample Post",
+                                            description = "This is a sample post description."
                                         ),
-                                        message = "Post fetched successfully",
-                                        status = "Success"
-                                    )
+                                        PostDto(
+                                            id = 2,
+                                            title = "Sample Post 2",
+                                            description = "This is a sample post description."
+                                        ),
+                                        PostDto(
+                                            id = 3,
+                                            title = "Sample Post 3",
+                                            description = "This is a sample post description."
+                                        )
+                                    ),
                                 )
 
+                            }
+
+                            override suspend fun getSliders(): Response<List<SliderDto>> {
+                                return Response.success(
+                                    listOf(
+                                        SliderDto(
+                                            id = 1,
+                                            title = "Sample Slider",
+                                            url = "https://example.com/slider1.jpg"
+                                        ),
+                                        SliderDto(
+                                            id = 2,
+                                            title = "Sample Slider 2",
+                                            url = "https://example.com/slider2.jpg"
+                                        )
+                                    )
+                                )
                             }
                         },
                         object : PostDao {
@@ -264,24 +263,58 @@ fun PostScreenPreview() {
 
                             override suspend fun insertPosts(posts: List<PostEntity>) {}
                             override suspend fun clearPosts() {}
-                        }
+                        },
 
+                        )
+                ),
+
+                GetAllSlidersUseCase(
+                    PostRepositoryImpl(
+                        object : AppApiService {
+                            override suspend fun getPosts(): Response<List<PostDto>> {
+                                return Response.success(
+                                    listOf(
+                                        PostDto(
+                                            id = 1,
+                                            title = "Sample Post",
+                                            description = "This is a sample post description."
+                                        ),
+                                        PostDto(
+                                            id = 2,
+                                            title = "Sample Post 2",
+                                            description = "This is a sample post description."
+                                        ),
+                                        PostDto(
+                                            id = 3,
+                                            title = "Sample Post 3",
+                                            description = "This is a sample post description."
+                                        )
+                                    ),
+                                )
+
+                            }
+
+                            override suspend fun getSliders(): Response<List<SliderDto>> {
+                                return Response.success(
+                                    listOf(
+                                        SliderDto(
+                                            id = 1,
+                                            title = "Sample Slider",
+                                            url = "https://example.com/slider1.jpg"
+                                        ),
+                                        SliderDto(
+                                            id = 2,
+                                            title = "Sample Slider 2",
+                                            url = "https://example.com/slider2.jpg"
+                                        )
+                                    )
+                                )
+                            }
+                        },
+                        postDao = TODO()
                     )
                 ),
-                object : PostDao {
-                    override suspend fun getPosts(): List<PostEntity> {
-                        return listOf(
-                            PostEntity(
-                                id = 1,
-                                title = "Sample Post",
-                                description = "This is a sample post description."
-                            )
-                        )
-                    }
-
-                    override suspend fun insertPosts(posts: List<PostEntity>) {}
-                    override suspend fun clearPosts() {}
-                }
+                postDao = TODO(),
             )
         )
     }

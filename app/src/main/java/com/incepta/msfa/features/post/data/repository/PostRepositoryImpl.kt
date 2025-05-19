@@ -12,6 +12,7 @@ import com.incepta.msfa.features.post.data.mapper.toDomain
 import com.incepta.msfa.features.post.data.model.PostDto
 import com.incepta.msfa.features.post.data.model.toDomain
 import com.incepta.msfa.features.post.data.model.toEntity
+import com.incepta.msfa.features.post.domain.model.Slider
 import com.incepta.msfa.shared.data.local.PostDao
 import okio.IOException
 import retrofit2.HttpException
@@ -28,9 +29,10 @@ class PostRepositoryImpl @Inject constructor(
 
     override suspend fun getPosts(): Result<List<Post>> {
         val apiResult = safeApiCall { apiService.getPosts() }
-            .mapSuccess { it-> it.data?.map { postDto ->
-                postDto.toDomain()
-            } ?: emptyList()
+            .mapSuccess { it ->
+                it.map { postDto ->
+                    postDto.toDomain()
+                }
             }
         // Cache successful API response
         if (apiResult is Result.Success) {
@@ -45,6 +47,15 @@ class PostRepositoryImpl @Inject constructor(
         } else {
             apiResult // Return API error if no cache
         }
+    }
+
+    override suspend fun getSliders(): Result<List<Slider>> {
+        return safeApiCall { apiService.getSliders() }
+            .mapSuccess {
+                it.map { sliderDto ->
+                    sliderDto.toDomain()
+                }
+            }
     }
 
 }

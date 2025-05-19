@@ -23,7 +23,7 @@ android {
     }
     buildTypes {
         debug {
-            buildConfigField("String", "BASE_URL", "\"https://6593e0531493b011606959dd.mockapi.io/\"")
+            buildConfigField("String", "BASE_URL", "\"https://682a1577ab2b5004cb35c9c6.mockapi.io/\"")
         }
 
         release {

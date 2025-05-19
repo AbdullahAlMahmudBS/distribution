@@ -3,6 +3,7 @@ package com.incepta.msfa.features.post.presentation.components
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -28,7 +29,7 @@ import com.incepta.msfa.features.post.domain.model.Post
  */
 
 @Composable
-fun PostList(posts: List<Post>) {
+fun PostList(posts: List<Post>, onPostClick: (Post) -> Unit) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -36,16 +37,17 @@ fun PostList(posts: List<Post>) {
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         items(posts.size) { index ->
-            PostCard(post = posts[index])
+            PostCard(post = posts[index], onPostClick = onPostClick)
             Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
 
 @Composable
-fun PostCard(post: Post) {
+fun PostCard(post: Post, onPostClick: (Post) -> Unit = {}) {
     Card(
         modifier = Modifier
+            .clickable { onPostClick(post) }
             .fillMaxWidth()
             .animateContentSize(
                 animationSpec = spring(
