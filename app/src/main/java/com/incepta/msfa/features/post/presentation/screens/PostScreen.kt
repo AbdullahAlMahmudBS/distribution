@@ -30,10 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -41,7 +38,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.incepta.core.base.BaseResponse
 import com.incepta.core.base.UiEventHandler
 import com.incepta.msfa.features.post.data.model.PostDto
 import com.incepta.msfa.features.post.data.model.PostEntity
@@ -55,7 +51,7 @@ import com.incepta.msfa.features.post.presentation.components.ShimmerLoadingEffe
 import com.incepta.msfa.features.post.presentation.components.ShowcaseSliders
 import com.incepta.msfa.features.post.presentation.model.PostEvent
 import com.incepta.msfa.shared.data.remote.AppApiService
-import com.inceptaiddi.core.presentation.post.PostViewModel
+import com.incepta.msfa.features.post.presentation.view_model.PostViewModel
 import retrofit2.Response
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -1,10 +1,9 @@
-package com.inceptaiddi.core.presentation.post
+package com.incepta.msfa.features.post.presentation.view_model
 
 import androidx.lifecycle.viewModelScope
 import com.incepta.core.utils.Logger
 import com.incepta.msfa.features.post.data.model.PostEntity
 import com.incepta.msfa.shared.data.local.PostDao
-import com.incepta.msfa.features.post.domain.model.Post
 import com.incepta.msfa.features.post.domain.usecase.GetAllPostUseCase
 import com.incepta.msfa.features.post.domain.usecase.GetAllSlidersUseCase
 import com.incepta.msfa.features.post.presentation.model.PostEvent
