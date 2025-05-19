@@ -68,7 +68,7 @@ object NetworkFactory {
     ): Retrofit {
 
         retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(BASE_URL as String)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(getUnsafeClient(context, timeOut, enableTokenInterceptor))
             .build()

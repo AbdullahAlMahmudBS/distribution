@@ -27,6 +27,7 @@ android {
         }
 
         release {
+            buildConfigField("String", "BASE_URL", "\"https://682a1577ab2b5004cb35c9c6.mockapi.io/\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
