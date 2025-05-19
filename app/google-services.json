@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "239854791261",
+    "project_id": "msfa-4c297",
+    "storage_bucket": "msfa-4c297.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:239854791261:android:a42e33b8c72236339afbb4",
+        "android_client_info": {
+          "package_name": "com.incepta.msfa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_6wGfI-EKac9blzUGc2JWulHC0J45prA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
