@@ -27,7 +27,6 @@ class PostViewModel @Inject constructor(
     private val _postsState = MutableStateFlow(PostUiState())
     val postsState: StateFlow<PostUiState> = _postsState.asStateFlow()
 
-
     init {
          fetchPosts()
         fetchSliders()
