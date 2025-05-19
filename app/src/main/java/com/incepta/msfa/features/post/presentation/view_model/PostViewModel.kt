@@ -31,6 +31,7 @@ class PostViewModel @Inject constructor(
          fetchPosts()
         fetchSliders()
     }
+    
 
     fun onEvent(event: PostEvent) {
         when (event) {
